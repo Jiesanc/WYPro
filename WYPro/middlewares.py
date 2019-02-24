@@ -6,6 +6,7 @@
 # https://doc.scrapy.org/en/latest/topics/spider-middleware.html
 
 from scrapy import signals
+from scrapy.http import HtmlResponse
 
 
 class WyproSpiderMiddleware(object):
@@ -80,14 +81,22 @@ class WyproDownloaderMiddleware(object):
         #   installed downloader middleware will be called
         return None
 
+    # 拦截到想要对象(拦截的是下载器传递给spider的响应对象)
+    # request请求对象
+    # response响应对象
+    # spider参数表示爬虫文件中对应爬虫类的实例
     def process_response(self, request, response, spider):
-        # Called with the response returned from the downloader.
+        # 对响应对象中页面数据的篡改
+        if request.url in ['http://news.163.com/domestic/',
+                           'http://news.163.com/air/',
+                           'http://war.163.com/',
+                           'http://news.163.com/world/']:
+            spider.bro.get(url=request.url)
+            page_text = spider.bro.page_source
 
-        # Must either;
-        # - return a Response object
-        # - return a Request object
-        # - or raise IgnoreRequest
-        return response
+            return HtmlResponse(url=spider.bro.current_url, body=page_text, encoding='utf-8', request=request)
+        else:
+            return response
 
     def process_exception(self, request, exception, spider):
         # Called when a download handler or a process_request()
@@ -101,3 +110,4 @@ class WyproDownloaderMiddleware(object):
 
     def spider_opened(self, spider):
         spider.logger.info('Spider opened: %s' % spider.name)
+
