@@ -21,4 +21,14 @@ class WangyiSpider(scrapy.Spider):
             # 拿到板块标题
             title = li.xpath('./a/text()').extract_first()
 
-            print(url+':'+title)
+            yield  scrapy.Request(url=url, callback=self.parseSecond)
+
+    def parseSecond(self, response):
+        div_list = response.xpath('//div[@class="data_row news_article clearfix"]')
+        print(len(div_list))
+        for div in div_list:
+            head = div.xpath('.//div[@class=news_title]/h3/a/text()').extract_first()
+            url = div.xpath('.//div[@class=news_title]/h3/a/@href').extract_first()
+            imageUrl = div.xpath('./a/img/@src').extract_first()
+            tagList = div.xpath('.//[@class"news_tag"]//text()').extract()
+            tag = ''.join(tagList)
