@@ -52,9 +52,13 @@ ROBOTSTXT_OBEY = False
 
 # Enable or disable downloader middlewares
 # See https://doc.scrapy.org/en/latest/topics/downloader-middleware.html
-#DOWNLOADER_MIDDLEWARES = {
-#    'WYPro.middlewares.WyproDownloaderMiddleware': 543,
-#}
+
+DOWNLOADER_MIDDLEWARES = {
+   'WYPro.middlewares.WyproDownloaderMiddleware': 543,
+   'WYPro.middlewares.RandomUserAgent': 542,
+   'WYPro.middlewares.Proxy': 541,
+}
+
 
 # Enable or disable extensions
 # See https://doc.scrapy.org/en/latest/topics/extensions.html
