@@ -8,4 +8,5 @@
 
 class WyproPipeline(object):
     def process_item(self, item, spider):
+        print(item['title']+item['content'])
         return item

@@ -11,4 +11,9 @@ import scrapy
 class WyproItem(scrapy.Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
-    pass
+    head = scrapy.Field()
+    url = scrapy.Field()
+    imageUrl = scrapy.Field()
+    tag = scrapy.Field()
+    title = scrapy.Field()
+    content = scrapy.Field()

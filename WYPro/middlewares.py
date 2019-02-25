@@ -92,6 +92,11 @@ class WyproDownloaderMiddleware(object):
                            'http://war.163.com/',
                            'http://news.163.com/world/']:
             spider.bro.get(url=request.url)
+            js = 'window.scrollTo(0,document.body.scrollHeight)'
+            spider.bro.execute_script(js)
+            import time
+            # 给一个缓冲加载数据的时间
+            time.sleep(2)
             page_text = spider.bro.page_source
 
             return HtmlResponse(url=spider.bro.current_url, body=page_text, encoding='utf-8', request=request)

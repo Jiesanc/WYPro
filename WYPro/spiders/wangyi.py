@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import scrapy
 from selenium import webdriver
+from WYPro.items import WyproItem
 
 
 class WangyiSpider(scrapy.Spider):
@@ -32,16 +33,45 @@ class WangyiSpider(scrapy.Spider):
             url = li.xpath('./a/@href').extract_first()
             # 拿到板块标题
             title = li.xpath('./a/text()').extract_first()
-
-            yield  scrapy.Request(url=url, callback=self.parseSecond)
+            # 请求传参
+            yield scrapy.Request(url=url, callback=self.parseSecond, meta={'title': title})
 
     def parseSecond(self, response):
         div_list = response.xpath('//div[@class="data_row news_article clearfix "]')
         print(len(div_list))
 
         for div in div_list:
-            head = div.xpath('.//div[@class=news_title]/h3/a/text()').extract_first()
-            url = div.xpath('.//div[@class=news_title]/h3/a/@href').extract_first()
+            head = div.xpath('.//div[@class="news_title"]/h3/a/text()').extract_first()
+            url = div.xpath('.//div[@class="news_title"]/h3/a/@href').extract_first()
             imageUrl = div.xpath('./a/img/@src').extract_first()
             tagList = div.xpath('.//div[@class="news_tag"]//text()').extract()
-            tag = ''.join(tagList)
+            tags = []
+            for i in tagList:
+                i = i.strip(' \n \t')
+                tags.append(i)
+            # print(head+':'+url+':'+imageUrl+tag)
+            # 获取title
+            title = response.meta['title']
+
+            # 实例化item对象,将解析到的数据存储到item对象中
+            item = WyproItem()
+            item['head'] = head
+            item['url'] = url
+            item['imageUrl'] = imageUrl
+            item['tag'] = tags
+            item['title'] = title
+
+            # 对url发起请求,获取对应页面中存储的新闻内容数据
+            yield scrapy.Request(url=url, callback=self.getContent, meta={'item': item})
+
+    def getContent(self, response):
+
+        # 获取传递过来的item
+        item = response.meta['item']
+
+        # 解析出新闻数据
+        content_list = response.xpath('//div[@class="post_text"]/p/text()').extract()
+        content = "".join(content_list)
+        item['content'] = content
+
+        yield item
