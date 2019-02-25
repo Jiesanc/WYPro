@@ -2,12 +2,14 @@
 import scrapy
 from selenium import webdriver
 from WYPro.items import WyproItem
+from scrapy_redis.spiders import RedisSpider
 
 
-class WangyiSpider(scrapy.Spider):
+class WangyiSpider(RedisSpider):
     name = 'wangyi'
     # allowed_domains = ['www.xxx.com']
-    start_urls = ['http://news.163.com']
+    # start_urls = ['http://news.163.com']
+    redis_key = 'wangyi'
 
     def __init__(self):
         # 放在这边为了只实例化一次webdriver对象

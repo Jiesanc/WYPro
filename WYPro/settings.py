@@ -69,8 +69,10 @@ DOWNLOADER_MIDDLEWARES = {
 # Configure item pipelines
 # See https://doc.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-    'WYPro.pipelines.WyproPipeline': 300,
+   # 'WYPro.pipelines.WyproPipeline': 300,
+   'scrapy_redis.pipelines.RedisPipeline': 400
 }
+
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://doc.scrapy.org/en/latest/topics/autothrottle.html
@@ -92,3 +94,15 @@ ITEM_PIPELINES = {
 #HTTPCACHE_DIR = 'httpcache'
 #HTTPCACHE_IGNORE_HTTP_CODES = []
 #HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
+
+# 使用scrapy-redis组件的去重队列
+DUPEFILTER_CLASS = "scrapy_redis.dupefilter.RFPDupeFilter"
+# 使用scrapy-redis组件自己的调度器
+SCHEDULER = "scrapy_redis.scheduler.Scheduler"
+# 是否允许暂停
+SCHEDULER_PERSIST = True
+
+
+REDIS_HOST = '192.168.11.19'
+REDIS_PORT = 6379
+REDIS_ENCODING = 'utf-8'
